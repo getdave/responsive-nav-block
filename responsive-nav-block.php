@@ -61,9 +61,9 @@ function getdave_responsive_nav_block_block_data( $parsed_block ) {
 
 		$class_names = array_filter(
 			array(
-				'hide-on-desktop' => ! empty( $parsed_block['attrs']['hideOnDesktop'] ),
-				'hide-on-mobile'  => ! empty( $parsed_block['attrs']['hideOnMobile'] ),
-				'hide-on-tablet'  => ! empty( $parsed_block['attrs']['hideOnTablet'] ),
+				'hide-on-desktop' => isset( $parsed_block['attrs']['hideOnDesktop'] ),
+				'hide-on-tablet'  => isset( $parsed_block['attrs']['hideOnTablet'] ),
+				'hide-on-mobile'  => isset( $parsed_block['attrs']['hideOnMobile'] ),
 			),
 		);
 
@@ -79,4 +79,4 @@ function getdave_responsive_nav_block_block_data( $parsed_block ) {
 	return $parsed_block;
 }
 
-	add_filter( 'render_block_data', 'getdave_responsive_nav_block_block_data' );
+add_filter( 'render_block_data', 'getdave_responsive_nav_block_block_data' );
