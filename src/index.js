@@ -1,4 +1,4 @@
-import { createHigherOrderComponent } from "@wordpress/compose";
+import { createHigherOrderComponent } from '@wordpress/compose';
 import {
 	PanelBody,
 	ToggleControl,
@@ -6,12 +6,12 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
 	Notice,
-} from "@wordpress/components";
-import { InspectorControls } from "@wordpress/block-editor";
-import { addFilter } from "@wordpress/hooks";
-import { __ } from "@wordpress/i18n";
-import { mobile } from "@wordpress/icons";
-import classnames from "classnames";
+} from '@wordpress/components';
+import { InspectorControls } from '@wordpress/block-editor';
+import { addFilter } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
+import { mobile } from '@wordpress/icons';
+import classnames from 'classnames';
 
 // /**
 //  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -20,14 +20,14 @@ import classnames from "classnames";
 //  *
 //  * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
 //  */
-import "./style.scss";
+import './style.scss';
 
-const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
-	return (props) => {
+const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
+	return ( props ) => {
 		const { name, attributes, setAttributes } = props;
 
-		if (name !== "core/navigation") {
-			return <BlockEdit {...props} />;
+		if ( name !== 'core/navigation' ) {
+			return <BlockEdit { ...props } />;
 		}
 
 		const { hideOnMobile, hideOnTablet, hideOnDesktop } = attributes;
@@ -35,90 +35,132 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 		const isAllHidden = hideOnMobile && hideOnTablet && hideOnDesktop;
 
 		function resetAll() {
-			setAttributes({
+			setAttributes( {
 				hideOnMobile: false,
 				hideOnTablet: false,
 				hideOnDesktop: false,
-			});
+			} );
 		}
 
 		return (
 			<>
 				<InspectorControls>
 					<PanelBody
-						icon={mobile}
-						title={__("Responsive", "getdave/responsive-nav-block")}
+						icon={ mobile }
+						title={ __(
+							'Responsive',
+							'getdave/responsive-nav-block'
+						) }
 					>
 						<p>
-							{__(
-								"Control the visibility of this Navigation on a per device basis.",
-								"getdave/responsive-nav-block"
-							)}
+							{ __(
+								'Control the visibility of this Navigation on a per device basis.',
+								'getdave/responsive-nav-block'
+							) }
 						</p>
 						<ToggleGroupControl
-							label={__("Mobile visibility", "getdave/responsive-nav-block")}
-							value={hideOnMobile}
-							onChange={() => setAttributes({ hideOnMobile: !hideOnMobile })}
+							label={ __(
+								'Mobile visibility',
+								'getdave/responsive-nav-block'
+							) }
+							value={ hideOnMobile }
+							onChange={ () =>
+								setAttributes( {
+									hideOnMobile: ! hideOnMobile,
+								} )
+							}
 							isAdaptiveWidth
 						>
-							<ToggleGroupControlOption label="Visible" value={false} />
-							<ToggleGroupControlOption label="Hidden" value={true} />
+							<ToggleGroupControlOption
+								label="Visible"
+								value={ false }
+							/>
+							<ToggleGroupControlOption
+								label="Hidden"
+								value={ true }
+							/>
 						</ToggleGroupControl>
 
 						<ToggleGroupControl
-							label={__("Tablet visibility", "getdave/responsive-nav-block")}
-							value={hideOnTablet}
-							onChange={() => setAttributes({ hideOnTablet: !hideOnTablet })}
+							label={ __(
+								'Tablet visibility',
+								'getdave/responsive-nav-block'
+							) }
+							value={ hideOnTablet }
+							onChange={ () =>
+								setAttributes( {
+									hideOnTablet: ! hideOnTablet,
+								} )
+							}
 							isAdaptiveWidth
 						>
-							<ToggleGroupControlOption label="Visible" value={false} />
-							<ToggleGroupControlOption label="Hidden" value={true} />
+							<ToggleGroupControlOption
+								label="Visible"
+								value={ false }
+							/>
+							<ToggleGroupControlOption
+								label="Hidden"
+								value={ true }
+							/>
 						</ToggleGroupControl>
 
 						<ToggleGroupControl
-							label={__("Desktop visibility", "getdave/responsive-nav-block")}
-							value={hideOnDesktop}
-							onChange={() => setAttributes({ hideOnDesktop: !hideOnDesktop })}
+							label={ __(
+								'Desktop visibility',
+								'getdave/responsive-nav-block'
+							) }
+							value={ hideOnDesktop }
+							onChange={ () =>
+								setAttributes( {
+									hideOnDesktop: ! hideOnDesktop,
+								} )
+							}
 							isAdaptiveWidth
 						>
-							<ToggleGroupControlOption label="Visible" value={false} />
-							<ToggleGroupControlOption label="Hidden" value={true} />
+							<ToggleGroupControlOption
+								label="Visible"
+								value={ false }
+							/>
+							<ToggleGroupControlOption
+								label="Hidden"
+								value={ true }
+							/>
 						</ToggleGroupControl>
 
-						<Button onClick={resetAll} isTertiary>
-							{__("Reset", "getdave/responsive-nav-block")}
+						<Button onClick={ resetAll } isTertiary>
+							{ __( 'Reset', 'getdave/responsive-nav-block' ) }
 						</Button>
 
-						{isAllHidden && (
-							<Notice status="warning" isDismissible={false}>
-								{__(
-									"This Navigation will currently be hidden on all screen sizes.",
-									"getdave/responsive-nav-block"
-								)}
+						{ isAllHidden && (
+							<Notice status="warning" isDismissible={ false }>
+								{ __(
+									'This Navigation will currently be hidden on all screen sizes.',
+									'getdave/responsive-nav-block'
+								) }
 							</Notice>
-						)}
+						) }
 					</PanelBody>
 				</InspectorControls>
-				<BlockEdit {...props} />
+				<BlockEdit { ...props } />
 			</>
 		);
 	};
-}, "withInspectorControl");
+}, 'withInspectorControl' );
 
-const addResponsiveAttributes = (settings) => {
+const addResponsiveAttributes = ( settings ) => {
 	settings.attributes = {
 		...settings.attributes,
 		hideOnMobile: {
-			type: "boolean",
+			type: 'boolean',
 			default: false,
 		},
 		hideOnTablet: {
-			type: "boolean",
+			type: 'boolean',
 			default: false,
 		},
 
 		hideOnDesktop: {
-			type: "boolean",
+			type: 'boolean',
 			default: false,
 		},
 	};
@@ -126,39 +168,39 @@ const addResponsiveAttributes = (settings) => {
 	return settings;
 };
 
-const withBlockClassnames = createHigherOrderComponent((BlockListBlock) => {
-	return (props) => {
+const withBlockClassnames = createHigherOrderComponent( ( BlockListBlock ) => {
+	return ( props ) => {
 		const { name, attributes } = props;
 
-		if (name !== "core/navigation") {
-			return <BlockListBlock {...props} />;
+		if ( name !== 'core/navigation' ) {
+			return <BlockListBlock { ...props } />;
 		}
 
-		const classNames = classnames({
+		const classNames = classnames( {
 			...props?.className,
-			"hide-on-desktop": attributes.hideOnDesktop,
-			"hide-on-tablet": attributes.hideOnTablet,
-			"hide-on-mobile": attributes.hideOnMobile,
-		});
+			'hide-on-desktop': attributes.hideOnDesktop,
+			'hide-on-tablet': attributes.hideOnTablet,
+			'hide-on-mobile': attributes.hideOnMobile,
+		} );
 
-		return <BlockListBlock {...props} className={classNames} />;
+		return <BlockListBlock { ...props } className={ classNames } />;
 	};
-}, "withBlockClassnames");
+}, 'withBlockClassnames' );
 
 addFilter(
-	"editor.BlockListBlock",
-	"getdave/with-block-classes",
+	'editor.BlockListBlock',
+	'getdave/with-block-classes',
 	withBlockClassnames
 );
 
 addFilter(
-	"blocks.registerBlockType",
-	"getdave/add-attributes",
+	'blocks.registerBlockType',
+	'getdave/add-attributes',
 	addResponsiveAttributes
 );
 
 addFilter(
-	"editor.BlockEdit",
-	"getdave/with-inspector-controls",
+	'editor.BlockEdit',
+	'getdave/with-inspector-controls',
 	withInspectorControls
 );
