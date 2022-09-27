@@ -1,0 +1,56 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+// Grab the breakpoint variables from the base styles package.
+@import 'node_modules/@wordpress/base-styles/breakpoints';
+
+// this `body` is required for the CSS parser to pick up these styles as being
+// required for inclusion in the Site Editor iframe. This is due to the Media
+// Queries confusing the regex which looks for `wp-block-*` or `body`.
+
+// .editor-styles-wrapper {
+// 	color: inherit;
+// }
+
+.wp-block-navigation {
+	outline: red !important;
+}
+
+.wp-block-navigation:not(.is-selected):not(.has-child-selected) {
+
+	&.hide-on-desktop {
+		@media screen and (min-width: $break-large) {
+			display: none !important;
+		}
+	}
+
+	&.hide-on-tablet {
+		@media screen and (min-width: $break-medium) and (max-width: $break-large) {
+			display: none !important;
+		}
+	}
+
+	&.hide-on-mobile {
+		@media screen and (max-width: $break-medium) {
+			display: none !important;
+		}
+	}
+}
+
+
+
+
+
+
+// $break-huge: 1440px;
+// $break-wide: 1280px;
+// $break-xlarge: 1080px;
+// $break-large: 960px; // admin sidebar auto folds
+// $break-medium: 782px; // adminbar goes big
+// $break-small: 600px;
+// $break-mobile: 480px;
+// $break-zoomed-in: 280px;

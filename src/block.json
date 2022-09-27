@@ -1,0 +1,17 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "getdave/responsive-nav-block",
+	"version": "0.1.0",
+	"title": "Responsive Navigation",
+	"category": "design",
+	"icon": "smiley",
+	"description": "A responsive core Navigation block",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "responsive-nav-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}
