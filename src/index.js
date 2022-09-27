@@ -44,7 +44,6 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 
 		return (
 			<>
-				<BlockEdit {...props} />
 				<InspectorControls>
 					<PanelBody
 						icon={mobile}
@@ -100,6 +99,7 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 						)}
 					</PanelBody>
 				</InspectorControls>
+				<BlockEdit {...props} />
 			</>
 		);
 	};
