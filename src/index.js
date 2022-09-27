@@ -146,8 +146,6 @@ const withBlockClassnames = createHigherOrderComponent((BlockListBlock) => {
 			return <BlockListBlock {...props} />;
 		}
 
-		debugger;
-
 		const classNames = classnames({
 			...props?.className,
 			"hide-on-desktop": attributes.hideOnDesktop,
