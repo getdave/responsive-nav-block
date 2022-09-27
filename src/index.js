@@ -2,12 +2,15 @@ import { createHigherOrderComponent } from "@wordpress/compose";
 import {
 	PanelBody,
 	ToggleControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
 	Notice,
 } from "@wordpress/components";
 import { InspectorControls } from "@wordpress/block-editor";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
+import { mobile } from "@wordpress/icons";
 import classnames from "classnames";
 
 // /**
@@ -44,31 +47,55 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 				<BlockEdit {...props} />
 				<InspectorControls>
 					<PanelBody
-						icon="mobile"
+						icon={mobile}
 						title={__("Responsive", "getdave/responsive-nav-block")}
 					>
-						<ToggleControl
-							checked={hideOnMobile}
-							label={__("Hide on mobile", "getdave/responsive-nav-block")}
+						<p>
+							{__(
+								"Control the visibility of this Navigation on a per device basis.",
+								"getdave/responsive-nav-block"
+							)}
+						</p>
+						<ToggleGroupControl
+							label={__("Mobile visibility", "getdave/responsive-nav-block")}
+							value={hideOnMobile}
 							onChange={() => setAttributes({ hideOnMobile: !hideOnMobile })}
-						/>
-						<ToggleControl
-							checked={hideOnTablet}
-							label={__("Hide on tablet", "getdave/responsive-nav-block")}
+							isAdaptiveWidth
+						>
+							<ToggleGroupControlOption label="Visible" value={false} />
+							<ToggleGroupControlOption label="Hidden" value={true} />
+						</ToggleGroupControl>
+
+						<ToggleGroupControl
+							label={__("Tablet visibility", "getdave/responsive-nav-block")}
+							value={hideOnTablet}
 							onChange={() => setAttributes({ hideOnTablet: !hideOnTablet })}
-						/>
-						<ToggleControl
-							checked={hideOnDesktop}
-							label={__("Hide on desktop", "getdave/responsive-nav-block")}
+							isAdaptiveWidth
+						>
+							<ToggleGroupControlOption label="Visible" value={false} />
+							<ToggleGroupControlOption label="Hidden" value={true} />
+						</ToggleGroupControl>
+
+						<ToggleGroupControl
+							label={__("Desktop visibility", "getdave/responsive-nav-block")}
+							value={hideOnDesktop}
 							onChange={() => setAttributes({ hideOnDesktop: !hideOnDesktop })}
-						/>
+							isAdaptiveWidth
+						>
+							<ToggleGroupControlOption label="Visible" value={false} />
+							<ToggleGroupControlOption label="Hidden" value={true} />
+						</ToggleGroupControl>
+
 						<Button onClick={resetAll} isTertiary>
-							Reset
+							{__("Reset", "getdave/responsive-nav-block")}
 						</Button>
 
 						{isAllHidden && (
 							<Notice status="warning" isDismissible={false}>
-								{__("Your block will currently be hidden at all screen sizes.")}
+								{__(
+									"This Navigation will currently be hidden on all screen sizes.",
+									"getdave/responsive-nav-block"
+								)}
 							</Notice>
 						)}
 					</PanelBody>
