@@ -6,7 +6,7 @@
 	"title": "Responsive Navigation",
 	"category": "design",
 	"icon": "smiley",
-	"description": "A responsive core Navigation block",
+	"description": "Extends the Navigation block with responsive helpers.",
 	"supports": {
 		"html": false
 	},
