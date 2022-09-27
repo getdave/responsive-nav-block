@@ -22,15 +22,14 @@
 	}
 
 	&.hide-on-tablet {
-		@media screen and (min-width: $break-medium) and (max-width: $break-large) { // 782px - 960px
+		@media screen and (min-width: $break-medium) and (max-width: #{$break-large - 0.1}) { // 782px - 959.9px
 			display: none !important;
 		}
 	}
 
 	&.hide-on-mobile {
-		@media screen and (max-width: $break-medium) { // <= 782px;
+		@media screen and (max-width: #{$break-medium - 0.1}) { // < 782px;
 			display: none !important;
 		}
 	}
 }
-
