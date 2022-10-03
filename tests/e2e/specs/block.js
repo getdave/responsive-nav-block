@@ -8,6 +8,9 @@ import {
 	getEditedPostContent,
 	__experimentalRest as rest,
 	pressKeyWithModifier,
+	setBrowserViewport,
+	clickOnMoreMenuItem,
+	clickButton,
 } from "@wordpress/e2e-test-utils";
 import { addQueryArgs } from "@wordpress/url";
 
@@ -19,6 +22,8 @@ const MOBILE = "Mobile";
 const TABLET = "Tablet";
 const DESKTOP = "Desktop";
 
+const BLOCK_SELECTOR = `[aria-label="Editor content"][role="region"] [aria-label="Block: Navigation"]`;
+
 describe("Rendering", () => {
 	beforeAll(async () => {
 		await activatePlugin(PLUGIN_SLUG);
@@ -26,6 +31,7 @@ describe("Rendering", () => {
 	});
 	beforeEach(async () => {
 		await deleteAll([NAVIGATION_MENUS_ENDPOINT]);
+		await setBrowserViewport("large");
 		await createNewPost();
 	});
 	afterAll(async () => {
@@ -62,25 +68,86 @@ describe("Rendering", () => {
 
 		await openDocumentSettingsSidebar();
 
+		// Switch overlay to be always off.
+		await page.click(
+			`[aria-label="Configure overlay menu"] [aria-label="Off"]`
+		);
+
 		await setResponsiveControl(MOBILE, STATE_HIDDEN);
 
 		await setResponsiveControl(TABLET, STATE_HIDDEN);
 
 		await setResponsiveControl(DESKTOP, STATE_VISIBLE);
 
-		// Switch overlay to be always off.
-		await page.click(
-			`[aria-label="Configure overlay menu"] [aria-label="Off"]`
+		expect(await getStableEditedPostContent()).toMatchSnapshot();
+	});
+
+	it.only("hides block based on responsive settings", async () => {
+		// Now we have Nav Menu items resolved. Continue to assert.
+		await clickOnMoreMenuItem("Code editor");
+
+		const codeEditorInput = await page.waitForSelector(
+			".editor-post-text-editor"
 		);
 
-		expect(await getStableEditedPostContent()).toMatchSnapshot();
+		await codeEditorInput.click();
+
+		const markup =
+			'<!-- wp:navigation {"hideOnMobile":true,"hideOnTablet":true} /-->';
+
+		await page.keyboard.type(markup);
+
+		await clickButton("Exit code editor");
+
+		// Check settings - visible on desktop and hidden on smaller viewports.
+
+		await page.waitForSelector(BLOCK_SELECTOR, {
+			hidden: false,
+		});
+
+		await setBrowserViewport("medium");
+
+		await page.waitForSelector(BLOCK_SELECTOR, {
+			hidden: true,
+		});
+
+		await setBrowserViewport("small");
+
+		await page.waitForSelector(BLOCK_SELECTOR, {
+			hidden: true,
+		});
+
+		// Check inverse settings - hidden on desktop and visible on smaller viewports.
+		await setBrowserViewport("large");
+
+		await selectNavigationBlock();
+
+		await setResponsiveControl(MOBILE, STATE_VISIBLE);
+
+		await setResponsiveControl(TABLET, STATE_VISIBLE);
+
+		await setResponsiveControl(DESKTOP, STATE_HIDDEN);
+
+		await page.waitForSelector(BLOCK_SELECTOR, {
+			hidden: true,
+		});
+
+		await setBrowserViewport("medium");
+
+		await page.waitForSelector(BLOCK_SELECTOR, {
+			hidden: false,
+		});
+
+		await setBrowserViewport("small");
+
+		await page.waitForSelector(BLOCK_SELECTOR, {
+			hidden: false,
+		});
 	});
 });
 
 async function selectNavigationBlock() {
-	const blockSelector = `[aria-label="Editor content"][role="region"] [aria-label="Block: Navigation"]`;
-
-	return page.click(blockSelector);
+	return page.click(BLOCK_SELECTOR);
 }
 
 async function getStableEditedPostContent() {
@@ -164,21 +231,3 @@ async function deleteAll(endpoints) {
 		}
 	}
 }
-
-// async function getBlockAttributes() {
-// 	function filterObject(obj, callback) {
-// 		return Object.fromEntries(
-// 			Object.entries(obj).filter(([key, val]) => callback(val, key))
-// 		);
-// 	}
-// 	return page.evaluate(() => {
-// 		const blocks = wp.data.select("core/block-editor").getBlocks();
-// 		const navigationBlock = blocks.find(
-// 			(block) => block.name === "core/navigation"
-// 		);
-
-// 		return filterObject(navigationBlock.attributes, ([key, value]) => {
-// 			return key !== "ref";
-// 		});
-// 	});
-// }

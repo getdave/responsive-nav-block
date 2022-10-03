@@ -17,7 +17,8 @@
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"start": "wp-scripts start",
-		"test:e2e": "wp-scripts test-e2e --wordpress-base-url=http://localhost:7976 --puppeteer-interactive",
+		"test:e2e": "wp-scripts test-e2e --wordpress-base-url=http://localhost:7976",
+		"test:e2e:interactive": "wp-scripts test-e2e --wordpress-base-url=http://localhost:7976 --puppeteer-interactive",
 		"test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools --wordpress-base-url=http://localhost:7976 --puppeteer-interactive",
 		"test:unit": "wp-scripts test-unit-js",
 		"wp-env": "wp-env"

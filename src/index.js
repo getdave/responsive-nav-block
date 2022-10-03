@@ -98,7 +98,7 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 						</ToggleGroupControl>
 
 						<Button onClick={resetAll} isTertiary>
-							{__("Reset", "getdave/responsive-nav-block")}
+							{__("Reset all", "getdave/responsive-nav-block")}
 						</Button>
 
 						{isAllHidden && (
