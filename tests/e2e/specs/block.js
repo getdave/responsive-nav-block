@@ -11,7 +11,10 @@ import {
 	setBrowserViewport,
 	clickOnMoreMenuItem,
 	clickButton,
+	openPreviewPage,
+	waitForWindowDimensions,
 } from "@wordpress/e2e-test-utils";
+
 import { addQueryArgs } from "@wordpress/url";
 
 const PLUGIN_SLUG = "responsive-navigation-block";
@@ -24,7 +27,7 @@ const DESKTOP = "Desktop";
 
 const BLOCK_SELECTOR = `[aria-label="Editor content"][role="region"] [aria-label="Block: Navigation"]`;
 
-describe("Rendering", () => {
+describe("Responsive Navigation block", () => {
 	beforeAll(async () => {
 		await activatePlugin(PLUGIN_SLUG);
 		await enablePageDialogAccept();
@@ -39,144 +42,166 @@ describe("Rendering", () => {
 		await deactivatePlugin(PLUGIN_SLUG);
 	});
 
-	it("adds Responsive tools to Navigation block inspector controls", async () => {
-		await insertBlock("Navigation");
+	describe("Editor", () => {
+		it("adds Responsive tools to Navigation block inspector controls", async () => {
+			await insertBlock("Navigation");
 
-		const createNewMenuButton = await page.waitForXPath(
-			'//button[contains(., "Start empty")]'
-		);
-		await createNewMenuButton.click();
+			await selectNavigationBlock();
 
-		await page.waitForXPath(
-			'//div[@class="components-snackbar__content"][contains(text(), "Navigation Menu successfully created.")]'
-		);
+			await openDocumentSettingsSidebar();
 
-		const appender = await page.waitForSelector(
-			".wp-block-navigation .block-editor-button-block-appender"
-		);
+			// Switch overlay to be always off.
+			await page.click(
+				`[aria-label="Configure overlay menu"] [aria-label="Off"]`
+			);
 
-		await appender.click();
+			await setResponsiveControl(MOBILE, STATE_HIDDEN);
 
-		// Add a link to the Link block.
-		await updateActiveNavigationLink({
-			url: "https://wordpress.org",
-			label: "Desktop Navigation Item",
-			type: "url",
+			await setResponsiveControl(TABLET, STATE_HIDDEN);
+
+			await setResponsiveControl(DESKTOP, STATE_VISIBLE);
+
+			expect(await getStableEditedPostContent()).toMatchSnapshot();
 		});
 
-		await selectNavigationBlock();
+		it("hides block based on responsive settings", async () => {
+			// Now we have Nav Menu items resolved. Continue to assert.
+			await clickOnMoreMenuItem("Code editor");
 
-		await openDocumentSettingsSidebar();
+			const codeEditorInput = await page.waitForSelector(
+				".editor-post-text-editor"
+			);
 
-		// Switch overlay to be always off.
-		await page.click(
-			`[aria-label="Configure overlay menu"] [aria-label="Off"]`
-		);
+			await codeEditorInput.click();
 
-		await setResponsiveControl(MOBILE, STATE_HIDDEN);
+			const markup =
+				'<!-- wp:navigation {"hideOnMobile":true,"hideOnTablet":true} /-->';
 
-		await setResponsiveControl(TABLET, STATE_HIDDEN);
+			await page.keyboard.type(markup);
 
-		await setResponsiveControl(DESKTOP, STATE_VISIBLE);
+			await clickButton("Exit code editor");
 
-		expect(await getStableEditedPostContent()).toMatchSnapshot();
+			// Check settings - visible on desktop and hidden on smaller viewports.
+			await page.waitForSelector(BLOCK_SELECTOR, {
+				hidden: false,
+			});
+
+			await setBrowserViewport("medium");
+			await page.waitForSelector(BLOCK_SELECTOR, {
+				hidden: true,
+			});
+
+			await setBrowserViewport("small");
+			await page.waitForSelector(BLOCK_SELECTOR, {
+				hidden: true,
+			});
+
+			// Check inverse settings - hidden on desktop and visible on smaller viewports.
+			await setBrowserViewport("large");
+
+			await selectNavigationBlock();
+
+			await setResponsiveControl(MOBILE, STATE_VISIBLE);
+
+			await setResponsiveControl(TABLET, STATE_VISIBLE);
+
+			await setResponsiveControl(DESKTOP, STATE_HIDDEN);
+
+			await page.waitForSelector(BLOCK_SELECTOR, {
+				hidden: true,
+			});
+
+			await setBrowserViewport("medium");
+			await page.waitForSelector(BLOCK_SELECTOR, {
+				hidden: false,
+			});
+
+			await setBrowserViewport("small");
+			await page.waitForSelector(BLOCK_SELECTOR, {
+				hidden: false,
+			});
+		});
+
+		it("displays warning when block hidden at all viewport sizes", async () => {
+			await insertBlock("Navigation");
+
+			await selectNavigationBlock();
+
+			await openDocumentSettingsSidebar();
+
+			await setResponsiveControl(MOBILE, STATE_HIDDEN);
+
+			await setResponsiveControl(TABLET, STATE_HIDDEN);
+
+			await setResponsiveControl(DESKTOP, STATE_HIDDEN);
+
+			const noticeText =
+				"This Navigation will currently be hidden on all screen sizes.";
+
+			await page.waitForXPath(
+				`//*[contains(@class, "components-notice")]/*[text()="${noticeText}"]`
+			);
+		});
+
+		it("provides control to reset all responsive settings", async () => {
+			await insertBlock("Navigation");
+
+			await selectNavigationBlock();
+
+			await openDocumentSettingsSidebar();
+
+			await setResponsiveControl(MOBILE, STATE_HIDDEN);
+
+			await setResponsiveControl(TABLET, STATE_HIDDEN);
+
+			await setResponsiveControl(DESKTOP, STATE_HIDDEN);
+
+			await clickButton("Reset all");
+
+			expect(await getStableEditedPostContent()).toMatchSnapshot();
+		});
 	});
 
-	it("hides block based on responsive settings", async () => {
-		// Now we have Nav Menu items resolved. Continue to assert.
-		await clickOnMoreMenuItem("Code editor");
+	describe("Front of site", () => {
+		it("should hide the block based on responsive setitngs", async () => {
+			await insertBlock("Navigation");
 
-		const codeEditorInput = await page.waitForSelector(
-			".editor-post-text-editor"
-		);
+			await selectNavigationBlock();
 
-		await codeEditorInput.click();
+			await openDocumentSettingsSidebar();
 
-		const markup =
-			'<!-- wp:navigation {"hideOnMobile":true,"hideOnTablet":true} /-->';
+			await setResponsiveControl(MOBILE, STATE_VISIBLE);
 
-		await page.keyboard.type(markup);
+			await setResponsiveControl(TABLET, STATE_HIDDEN);
 
-		await clickButton("Exit code editor");
+			await setResponsiveControl(DESKTOP, STATE_HIDDEN);
 
-		// Check settings - visible on desktop and hidden on smaller viewports.
-		await page.waitForSelector(BLOCK_SELECTOR, {
-			hidden: false,
+			const previewPage = await openPreviewPage();
+			await previewPage.bringToFront();
+			await previewPage.waitForNetworkIdle();
+
+			// Many test utils functions depend on the
+			// page being the current page.
+			page = previewPage;
+
+			// Test: hidden on desktop.
+			await setBrowserViewport("large");
+			await page.waitForSelector(".entry-content .wp-block-navigation", {
+				hidden: true,
+			});
+
+			// Test: visible on tablet.
+			await setBrowserViewport("medium");
+			await page.waitForSelector(".entry-content .wp-block-navigation", {
+				hidden: false,
+			});
+
+			// Test: visible on mobile.
+			await setBrowserViewport("small");
+			await page.waitForSelector(".entry-content .wp-block-navigation", {
+				hidden: false,
+			});
 		});
-
-		await setBrowserViewport("medium");
-		await page.waitForSelector(BLOCK_SELECTOR, {
-			hidden: true,
-		});
-
-		await setBrowserViewport("small");
-		await page.waitForSelector(BLOCK_SELECTOR, {
-			hidden: true,
-		});
-
-		// Check inverse settings - hidden on desktop and visible on smaller viewports.
-		await setBrowserViewport("large");
-
-		await selectNavigationBlock();
-
-		await setResponsiveControl(MOBILE, STATE_VISIBLE);
-
-		await setResponsiveControl(TABLET, STATE_VISIBLE);
-
-		await setResponsiveControl(DESKTOP, STATE_HIDDEN);
-
-		await page.waitForSelector(BLOCK_SELECTOR, {
-			hidden: true,
-		});
-
-		await setBrowserViewport("medium");
-		await page.waitForSelector(BLOCK_SELECTOR, {
-			hidden: false,
-		});
-
-		await setBrowserViewport("small");
-		await page.waitForSelector(BLOCK_SELECTOR, {
-			hidden: false,
-		});
-	});
-
-	it("displays warning when block hidden at all viewport sizes", async () => {
-		await insertBlock("Navigation");
-
-		await selectNavigationBlock();
-
-		await openDocumentSettingsSidebar();
-
-		await setResponsiveControl(MOBILE, STATE_HIDDEN);
-
-		await setResponsiveControl(TABLET, STATE_HIDDEN);
-
-		await setResponsiveControl(DESKTOP, STATE_HIDDEN);
-
-		const noticeText =
-			"This Navigation will currently be hidden on all screen sizes.";
-
-		await page.waitForXPath(
-			`//*[contains(@class, "components-notice")]/*[text()="${noticeText}"]`
-		);
-	});
-
-	it("provides control to reset all responsive settings", async () => {
-		await insertBlock("Navigation");
-
-		await selectNavigationBlock();
-
-		await openDocumentSettingsSidebar();
-
-		await setResponsiveControl(MOBILE, STATE_HIDDEN);
-
-		await setResponsiveControl(TABLET, STATE_HIDDEN);
-
-		await setResponsiveControl(DESKTOP, STATE_HIDDEN);
-
-		await clickButton("Reset all");
-
-		expect(await getStableEditedPostContent()).toMatchSnapshot();
 	});
 });
 
@@ -271,4 +296,26 @@ async function deleteAll(endpoints) {
 			});
 		}
 	}
+}
+
+export async function openPublishPage(editorPage = page) {
+	let openTabs = await browser.pages();
+	const expectedTabsCount = openTabs.length + 1;
+	await page.waitForSelector(
+		".block-editor-post-preview__button-toggle:not([disabled])"
+	);
+	await editorPage.click(".block-editor-post-preview__button-toggle");
+	await editorPage.waitForSelector(
+		".edit-post-header-preview__button-external"
+	);
+	await editorPage.click(".edit-post-header-preview__button-external");
+
+	// Wait for the new tab to open.
+	while (openTabs.length < expectedTabsCount) {
+		await editorPage.waitForTimeout(1);
+		openTabs = await browser.pages();
+	}
+
+	const previewPage = openTabs[openTabs.length - 1];
+	return previewPage;
 }

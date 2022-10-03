@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Rendering adds Responsive tools to Navigation block inspector controls 1`] = `"<!-- wp:navigation {\\"ref\\":1234567,\\"overlayMenu\\":\\"never\\",\\"hideOnMobile\\":true,\\"hideOnTablet\\":true} /-->"`;
+exports[`Responsive Navigation block Editor adds Responsive tools to Navigation block inspector controls 1`] = `
+"<!-- wp:navigation {\\"overlayMenu\\":\\"never\\",\\"hideOnMobile\\":true,\\"hideOnTablet\\":true} -->
+<!-- wp:page-list /-->
+<!-- /wp:navigation -->"
+`;
 
-exports[`Rendering provides control to reset all responsive settings 1`] = `"<!-- wp:navigation /-->"`;
+exports[`Responsive Navigation block Editor provides control to reset all responsive settings 1`] = `
+"<!-- wp:navigation -->
+<!-- wp:page-list /-->
+<!-- /wp:navigation -->"
+`;
