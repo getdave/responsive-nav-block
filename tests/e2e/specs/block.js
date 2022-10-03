@@ -105,13 +105,11 @@ describe("Rendering", () => {
 		});
 
 		await setBrowserViewport("medium");
-
 		await page.waitForSelector(BLOCK_SELECTOR, {
 			hidden: true,
 		});
 
 		await setBrowserViewport("small");
-
 		await page.waitForSelector(BLOCK_SELECTOR, {
 			hidden: true,
 		});
@@ -132,52 +130,28 @@ describe("Rendering", () => {
 		});
 
 		await setBrowserViewport("medium");
-
 		await page.waitForSelector(BLOCK_SELECTOR, {
 			hidden: false,
 		});
 
 		await setBrowserViewport("small");
-
 		await page.waitForSelector(BLOCK_SELECTOR, {
 			hidden: false,
 		});
 	});
 
 	it("displays warning when block hidden at all viewport sizes", async () => {
-		// Now we have Nav Menu items resolved. Continue to assert.
-		await clickOnMoreMenuItem("Code editor");
+		await insertBlock("Navigation");
 
-		const codeEditorInput = await page.waitForSelector(
-			".editor-post-text-editor"
-		);
-
-		await codeEditorInput.click();
-
-		const markup =
-			'<!-- wp:navigation {"hideOnMobile":true,"hideOnTablet":true, "hideOnDesktop":true} /-->';
-
-		await page.keyboard.type(markup);
-
-		await clickButton("Exit code editor");
-
-		// Select programmatically as block in canvas is hidden.
-		await page.evaluate(() => {
-			const blocks = wp.data.select("core/block-editor").getBlocks();
-			const navigationBlock = blocks.find(
-				({ name }) => name === "core/navigation"
-			);
-
-			if (!navigationBlock) {
-				return;
-			}
-
-			return wp.data
-				.dispatch("core/block-editor")
-				.selectBlock(navigationBlock?.clientId, 0);
-		});
+		await selectNavigationBlock();
 
 		await openDocumentSettingsSidebar();
+
+		await setResponsiveControl(MOBILE, STATE_HIDDEN);
+
+		await setResponsiveControl(TABLET, STATE_HIDDEN);
+
+		await setResponsiveControl(DESKTOP, STATE_HIDDEN);
 
 		const noticeText =
 			"This Navigation will currently be hidden on all screen sizes.";
@@ -186,12 +160,37 @@ describe("Rendering", () => {
 			`//*[contains(@class, "components-notice")]/*[text()="${noticeText}"]`
 		);
 	});
+
+	it("provides control to reset all responsive settings", async () => {
+		await insertBlock("Navigation");
+
+		await selectNavigationBlock();
+
+		await openDocumentSettingsSidebar();
+
+		await setResponsiveControl(MOBILE, STATE_HIDDEN);
+
+		await setResponsiveControl(TABLET, STATE_HIDDEN);
+
+		await setResponsiveControl(DESKTOP, STATE_HIDDEN);
+
+		await clickButton("Reset all");
+
+		expect(await getStableEditedPostContent()).toMatchSnapshot();
+	});
 });
 
 async function selectNavigationBlock() {
+	await page.waitForSelector(BLOCK_SELECTOR);
 	return page.click(BLOCK_SELECTOR);
 }
 
+/**
+ * Stablises non-stable attributes of the Navigation block.
+ * Principally the `ref` attribute.
+ *
+ * @returns String the stablised edited post content
+ */
 async function getStableEditedPostContent() {
 	const editedPostContent = await getEditedPostContent();
 
