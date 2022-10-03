@@ -48,6 +48,7 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 					<PanelBody
 						icon={mobile}
 						title={__("Responsive", "getdave/responsive-nav-block")}
+						className="getdave-responsive-nav-block-inspector-controls"
 					>
 						<p>
 							{__(

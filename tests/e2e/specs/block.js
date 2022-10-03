@@ -82,7 +82,7 @@ describe("Rendering", () => {
 		expect(await getStableEditedPostContent()).toMatchSnapshot();
 	});
 
-	it.only("hides block based on responsive settings", async () => {
+	it("hides block based on responsive settings", async () => {
 		// Now we have Nav Menu items resolved. Continue to assert.
 		await clickOnMoreMenuItem("Code editor");
 
@@ -100,7 +100,6 @@ describe("Rendering", () => {
 		await clickButton("Exit code editor");
 
 		// Check settings - visible on desktop and hidden on smaller viewports.
-
 		await page.waitForSelector(BLOCK_SELECTOR, {
 			hidden: false,
 		});
@@ -143,6 +142,49 @@ describe("Rendering", () => {
 		await page.waitForSelector(BLOCK_SELECTOR, {
 			hidden: false,
 		});
+	});
+
+	it("displays warning when block hidden at all viewport sizes", async () => {
+		// Now we have Nav Menu items resolved. Continue to assert.
+		await clickOnMoreMenuItem("Code editor");
+
+		const codeEditorInput = await page.waitForSelector(
+			".editor-post-text-editor"
+		);
+
+		await codeEditorInput.click();
+
+		const markup =
+			'<!-- wp:navigation {"hideOnMobile":true,"hideOnTablet":true, "hideOnDesktop":true} /-->';
+
+		await page.keyboard.type(markup);
+
+		await clickButton("Exit code editor");
+
+		// Select programmatically as block in canvas is hidden.
+		await page.evaluate(() => {
+			const blocks = wp.data.select("core/block-editor").getBlocks();
+			const navigationBlock = blocks.find(
+				({ name }) => name === "core/navigation"
+			);
+
+			if (!navigationBlock) {
+				return;
+			}
+
+			return wp.data
+				.dispatch("core/block-editor")
+				.selectBlock(navigationBlock?.clientId, 0);
+		});
+
+		await openDocumentSettingsSidebar();
+
+		const noticeText =
+			"This Navigation will currently be hidden on all screen sizes.";
+
+		await page.waitForXPath(
+			`//*[contains(@class, "components-notice")]/*[text()="${noticeText}"]`
+		);
 	});
 });
 
