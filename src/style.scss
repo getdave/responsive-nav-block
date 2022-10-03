@@ -13,7 +13,8 @@
 	color: inherit;
 }
 
-.wp-block-navigation:not(.is-selected):not(.has-child-selected) {
+// .wp-block-navigation:not(.is-selected):not(.has-child-selected) {
+.wp-block-navigation {
 
 	&.hide-on-desktop {
 		@media screen and (min-width: $break-large) { // >= 960px
