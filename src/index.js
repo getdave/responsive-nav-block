@@ -22,6 +22,20 @@ import classnames from "classnames";
  */
 import "./style.scss";
 
+function ResponsiveVisibilityControl({ label, value, onChange }) {
+	return (
+		<ToggleGroupControl
+			label={label}
+			value={value}
+			onChange={onChange}
+			isAdaptiveWidth
+		>
+			<ToggleGroupControlOption label="Visible" value={false} />
+			<ToggleGroupControlOption label="Hidden" value={true} />
+		</ToggleGroupControl>
+	);
+}
+
 const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 	return (props) => {
 		const { name, attributes, setAttributes } = props;
@@ -56,7 +70,8 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 								"getdave/responsive-nav-block"
 							)}
 						</p>
-						<ToggleGroupControl
+
+						<ResponsiveVisibilityControl
 							label={__("Mobile visibility", "getdave/responsive-nav-block")}
 							value={hideOnMobile}
 							onChange={() =>
@@ -64,13 +79,9 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 									hideOnMobile: !hideOnMobile,
 								})
 							}
-							isAdaptiveWidth
-						>
-							<ToggleGroupControlOption label="Visible" value={false} />
-							<ToggleGroupControlOption label="Hidden" value={true} />
-						</ToggleGroupControl>
+						/>
 
-						<ToggleGroupControl
+						<ResponsiveVisibilityControl
 							label={__("Tablet visibility", "getdave/responsive-nav-block")}
 							value={hideOnTablet}
 							onChange={() =>
@@ -78,13 +89,9 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 									hideOnTablet: !hideOnTablet,
 								})
 							}
-							isAdaptiveWidth
-						>
-							<ToggleGroupControlOption label="Visible" value={false} />
-							<ToggleGroupControlOption label="Hidden" value={true} />
-						</ToggleGroupControl>
+						/>
 
-						<ToggleGroupControl
+						<ResponsiveVisibilityControl
 							label={__("Desktop visibility", "getdave/responsive-nav-block")}
 							value={hideOnDesktop}
 							onChange={() =>
@@ -92,11 +99,7 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 									hideOnDesktop: !hideOnDesktop,
 								})
 							}
-							isAdaptiveWidth
-						>
-							<ToggleGroupControlOption label="Visible" value={false} />
-							<ToggleGroupControlOption label="Hidden" value={true} />
-						</ToggleGroupControl>
+						/>
 
 						<Button onClick={resetAll} variant="tertiary">
 							{__("Reset all", "getdave/responsive-nav-block")}
