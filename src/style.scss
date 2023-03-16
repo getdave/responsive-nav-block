@@ -6,14 +6,6 @@
 // Grab the breakpoint variables from the base styles package.
 @import 'node_modules/@wordpress/base-styles/breakpoints';
 
-// this selector is required for the CSS parser to pick up these styles as being
-// required for inclusion in the Site Editor iframe. This is due to the Media
-// Queries confusing the regex which looks for `wp-block-*` or `body`.
-.editor-styles-wrapper {
-	color: inherit;
-}
-
-// .wp-block-navigation:not(.is-selected):not(.has-child-selected) {
 .wp-block-navigation {
 
 	&.hide-on-desktop {
