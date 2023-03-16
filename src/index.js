@@ -21,6 +21,7 @@ import classnames from "classnames";
  * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
  */
 import "./style.scss";
+import "./editor.scss";
 
 function ResponsiveVisibilityControl({ label, value, onChange }) {
 	return (

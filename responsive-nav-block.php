@@ -51,6 +51,17 @@ function getdave_responsive_nav_block_sidebar_plugin_register() {
 }
 add_action( 'init', 'getdave_responsive_nav_block_sidebar_plugin_register' );
 
+function getdave_responsive_nav_block_enqueue_block_editor_assets() {
+	wp_enqueue_style(
+		'getdave-responsive-nav-block-editor-css',
+		plugins_url( 'build/index.css', __FILE__ ),
+		null, // no dependencies.
+		$manifest['version']
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'getdave_responsive_nav_block_enqueue_block_editor_assets' );
+
+
 /**
  * Enqueues the Editor JavaScript
  *

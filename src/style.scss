@@ -5,7 +5,6 @@
 
 // Grab the breakpoint variables from the base styles package.
 @import 'node_modules/@wordpress/base-styles/breakpoints';
-@import 'node_modules/@wordpress/base-styles/colors';
 
 .wp-block-navigation {
 
@@ -22,12 +21,3 @@
 	}
 }
 
-.getdave-responsive-nav-block-inspector-controls {
-	.components-notice {
-		margin: 1.5em 0;
-	}
-
-	.components-toggle-group-control {
-		border: 1px solid $gray-600;
-	}
-}
