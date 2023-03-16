@@ -80,7 +80,6 @@ function getdave_responsive_nav_block_block_data( $parsed_block ) {
 	$class_names = array_filter(
 		array(
 			'hide-on-desktop' => empty( $parsed_block['attrs']['getdaveResponsiveNavBlock']['desktop'] ),
-			'hide-on-tablet'  => empty( $parsed_block['attrs']['getdaveResponsiveNavBlock']['tablet'] ),
 			'hide-on-mobile'  => empty( $parsed_block['attrs']['getdaveResponsiveNavBlock']['mobile'] ),
 		)
 	);

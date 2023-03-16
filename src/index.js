@@ -44,15 +44,14 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 			return <BlockEdit {...props} />;
 		}
 
-		const { mobile, tablet, desktop } = attributes?.getdaveResponsiveNavBlock;
+		const { mobile, desktop } = attributes?.getdaveResponsiveNavBlock;
 
-		const isAllHidden = mobile && tablet && desktop;
+		const isAllHidden = mobile && desktop;
 
 		function resetAll() {
 			setAttributes({
 				getdaveResponsiveNavBlock: {
 					mobile: false,
-					tablet: false,
 					desktop: false,
 				},
 			});
@@ -73,31 +72,14 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 							)}
 						</p>
 
-						<ResponsiveVisibilityControl
-							label={__("Mobile visibility", "getdave/responsive-nav-block")}
-							value={mobile}
-							onChange={() =>
-								setAttributes({
-									getdaveResponsiveNavBlock: {
-										...attributes.getdaveResponsiveNavBlock,
-										mobile: !mobile,
-									},
-								})
-							}
-						/>
-
-						<ResponsiveVisibilityControl
-							label={__("Tablet visibility", "getdave/responsive-nav-block")}
-							value={tablet}
-							onChange={() =>
-								setAttributes({
-									getdaveResponsiveNavBlock: {
-										...attributes.getdaveResponsiveNavBlock,
-										tablet: !tablet,
-									},
-								})
-							}
-						/>
+						{isAllHidden && (
+							<Notice status="warning" isDismissible={false}>
+								{__(
+									"This Navigation is hidden on all screen sizes.",
+									"getdave/responsive-nav-block"
+								)}
+							</Notice>
+						)}
 
 						<ResponsiveVisibilityControl
 							label={__("Desktop visibility", "getdave/responsive-nav-block")}
@@ -112,18 +94,22 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 							}
 						/>
 
+						<ResponsiveVisibilityControl
+							label={__("Mobile visibility", "getdave/responsive-nav-block")}
+							value={mobile}
+							onChange={() =>
+								setAttributes({
+									getdaveResponsiveNavBlock: {
+										...attributes.getdaveResponsiveNavBlock,
+										mobile: !mobile,
+									},
+								})
+							}
+						/>
+
 						<Button onClick={resetAll} variant="tertiary">
 							{__("Reset all", "getdave/responsive-nav-block")}
 						</Button>
-
-						{isAllHidden && (
-							<Notice status="warning" isDismissible={false}>
-								{__(
-									"This Navigation will currently be hidden on all screen sizes.",
-									"getdave/responsive-nav-block"
-								)}
-							</Notice>
-						)}
 					</PanelBody>
 				</InspectorControls>
 				<BlockEdit {...props} />
@@ -139,7 +125,6 @@ const addResponsiveAttributes = (settings) => {
 			type: "object",
 			default: {
 				mobile: false,
-				tablet: false,
 				desktop: false,
 			},
 		},
@@ -156,12 +141,11 @@ const withBlockClassnames = createHigherOrderComponent((BlockListBlock) => {
 			return <BlockListBlock {...props} />;
 		}
 
-		const { mobile, tablet, desktop } = attributes.getdaveResponsiveNavBlock;
+		const { mobile, desktop } = attributes.getdaveResponsiveNavBlock;
 
 		const classNames = classnames({
 			...props?.className,
 			"hide-on-desktop": desktop,
-			"hide-on-tablet": tablet,
 			"hide-on-mobile": mobile,
 		});
 
