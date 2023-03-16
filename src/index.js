@@ -66,7 +66,7 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 						title={__("Responsive", "getdave/responsive-nav-block")}
 						className="getdave-responsive-nav-block-inspector-controls"
 					>
-						<p>
+						<p className="getdave-responsive-nav-block-inspector-controls__intro">
 							{__(
 								"Control the visibility of this Navigation on a per device basis.",
 								"getdave/responsive-nav-block"
