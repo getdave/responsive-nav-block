@@ -44,15 +44,17 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 			return <BlockEdit {...props} />;
 		}
 
-		const { hideOnMobile, hideOnTablet, hideOnDesktop } = attributes;
+		const { mobile, tablet, desktop } = attributes?.getdaveResponsiveNavBlock;
 
-		const isAllHidden = hideOnMobile && hideOnTablet && hideOnDesktop;
+		const isAllHidden = mobile && tablet && desktop;
 
 		function resetAll() {
 			setAttributes({
-				hideOnMobile: false,
-				hideOnTablet: false,
-				hideOnDesktop: false,
+				getdaveResponsiveNavBlock: {
+					mobile: false,
+					tablet: false,
+					desktop: false,
+				},
 			});
 		}
 
@@ -73,30 +75,39 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 
 						<ResponsiveVisibilityControl
 							label={__("Mobile visibility", "getdave/responsive-nav-block")}
-							value={hideOnMobile}
+							value={mobile}
 							onChange={() =>
 								setAttributes({
-									hideOnMobile: !hideOnMobile,
+									getdaveResponsiveNavBlock: {
+										...attributes.getdaveResponsiveNavBlock,
+										mobile: !mobile,
+									},
 								})
 							}
 						/>
 
 						<ResponsiveVisibilityControl
 							label={__("Tablet visibility", "getdave/responsive-nav-block")}
-							value={hideOnTablet}
+							value={tablet}
 							onChange={() =>
 								setAttributes({
-									hideOnTablet: !hideOnTablet,
+									getdaveResponsiveNavBlock: {
+										...attributes.getdaveResponsiveNavBlock,
+										tablet: !tablet,
+									},
 								})
 							}
 						/>
 
 						<ResponsiveVisibilityControl
 							label={__("Desktop visibility", "getdave/responsive-nav-block")}
-							value={hideOnDesktop}
+							value={desktop}
 							onChange={() =>
 								setAttributes({
-									hideOnDesktop: !hideOnDesktop,
+									getdaveResponsiveNavBlock: {
+										...attributes.getdaveResponsiveNavBlock,
+										desktop: !desktop,
+									},
 								})
 							}
 						/>
@@ -124,18 +135,13 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 const addResponsiveAttributes = (settings) => {
 	settings.attributes = {
 		...settings.attributes,
-		hideOnMobile: {
-			type: "boolean",
-			default: false,
-		},
-		hideOnTablet: {
-			type: "boolean",
-			default: false,
-		},
-
-		hideOnDesktop: {
-			type: "boolean",
-			default: false,
+		getdaveResponsiveNavBlock: {
+			type: "object",
+			default: {
+				mobile: false,
+				tablet: false,
+				desktop: false,
+			},
 		},
 	};
 
@@ -150,11 +156,13 @@ const withBlockClassnames = createHigherOrderComponent((BlockListBlock) => {
 			return <BlockListBlock {...props} />;
 		}
 
+		const { mobile, tablet, desktop } = attributes.getdaveResponsiveNavBlock;
+
 		const classNames = classnames({
 			...props?.className,
-			"hide-on-desktop": attributes.hideOnDesktop,
-			"hide-on-tablet": attributes.hideOnTablet,
-			"hide-on-mobile": attributes.hideOnMobile,
+			"hide-on-desktop": desktop,
+			"hide-on-tablet": tablet,
+			"hide-on-mobile": mobile,
 		});
 
 		return <BlockListBlock {...props} className={classNames} />;

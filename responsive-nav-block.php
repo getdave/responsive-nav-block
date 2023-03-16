@@ -77,14 +77,12 @@ function getdave_responsive_nav_block_block_data( $parsed_block ) {
 		return $parsed_block;
 	}
 
-	$settings = array(
-		'hide-on-desktop' => isset( $parsed_block['attrs']['hideOnDesktop'] ),
-		'hide-on-tablet'  => isset( $parsed_block['attrs']['hideOnTablet'] ),
-		'hide-on-mobile'  => isset( $parsed_block['attrs']['hideOnMobile'] ),
-	);
-
 	$class_names = array_filter(
-		$settings
+		array(
+			'hide-on-desktop' => empty( $parsed_block['attrs']['getdaveResponsiveNavBlock']['desktop'] ),
+			'hide-on-tablet'  => empty( $parsed_block['attrs']['getdaveResponsiveNavBlock']['tablet'] ),
+			'hide-on-mobile'  => empty( $parsed_block['attrs']['getdaveResponsiveNavBlock']['mobile'] ),
+		)
 	);
 
 	$class_names = implode( ' ', array_keys( $class_names ) );
