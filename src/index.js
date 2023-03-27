@@ -1,7 +1,6 @@
 import { createHigherOrderComponent } from "@wordpress/compose";
 import {
 	PanelBody,
-	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	Button,
@@ -10,8 +9,8 @@ import {
 import { InspectorControls } from "@wordpress/block-editor";
 import { addFilter } from "@wordpress/hooks";
 import { __ } from "@wordpress/i18n";
-import { mobile } from "@wordpress/icons";
 import classnames from "classnames";
+import { useEffect } from "@wordpress/element";
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -57,6 +56,29 @@ const withInspectorControls = createHigherOrderComponent((BlockEdit) => {
 				},
 			});
 		}
+
+		// Handle auto toggling of the overlay menu mode.
+		useEffect(() => {
+			// Mobile mode
+			if (!mobile && desktop) {
+				setAttributes({
+					overlayMenu: "always",
+				});
+				return;
+			}
+
+			// Desktop mode
+			if (mobile && !desktop) {
+				setAttributes({
+					overlayMenu: "never",
+				});
+				return;
+			}
+
+			setAttributes({
+				overlayMenu: "mobile",
+			});
+		}, [mobile, desktop]);
 
 		return (
 			<>
